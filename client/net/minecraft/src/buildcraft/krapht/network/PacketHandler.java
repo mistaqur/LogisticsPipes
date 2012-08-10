@@ -283,12 +283,12 @@ public class PacketHandler implements IPacketHandler {
 		}
 	}
 
-	private void handleNonContainerGui(PacketPipeInteger packet) {
-		Object gui = new GuiHandler().getGuiElement(packet.integer, ModLoader.getMinecraftInstance().thePlayer, ModLoader.getMinecraftInstance().theWorld,packet.posX,packet.posY,packet.posZ);
-		if(gui instanceof GuiScreen) {
-			ModLoader.openGUI(ModLoader.getMinecraftInstance().thePlayer, (GuiScreen)gui);
-		}
-	}
+	//private void handleNonContainerGui(PacketPipeInteger packet) {
+	//	Object gui = new GuiHandler().getGuiElement(packet.integer, ModLoader.getMinecraftInstance().thePlayer, ModLoader.getMinecraftInstance().theWorld,packet.posX,packet.posY,packet.posZ);
+	//	if(gui instanceof GuiScreen) {
+	//		ModLoader.openGUI(ModLoader.getMinecraftInstance().thePlayer, (GuiScreen)gui);
+	//	}
+	//}
 
 	private void handleRequestMK2DiskItem(PacketItem packet) {
 		final TileGenericPipe tile = getPipe(ModLoader.getMinecraftInstance().theWorld, packet.posX, packet.posY, packet.posZ);
