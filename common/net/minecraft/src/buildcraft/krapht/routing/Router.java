@@ -16,6 +16,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.core_LogisticsPipes;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.krapht.CoreRoutedPipe;
@@ -56,7 +57,7 @@ public class Router implements IRouter {
 	private boolean _blockNeedsUpdate;
 	
 	public final UUID id;
-	private World worldObj;
+	private int _dimension;
 	private final int _xCoord;
 	private final int _yCoord;
 	private final int _zCoord;
@@ -67,9 +68,9 @@ public class Router implements IRouter {
 		_laser = new RouteLaser();
 	}
 	
-	public Router(UUID id, World worldObj, int xCoord, int yCoord, int zCoord){
+	public Router(UUID id, int dimension, int xCoord, int yCoord, int zCoord){
 		this.id = id;
-		this.worldObj = worldObj;
+		this._dimension = dimension;
 		this._xCoord = xCoord;
 		this._yCoord = yCoord;
 		this._zCoord = zCoord;
@@ -79,16 +80,20 @@ public class Router implements IRouter {
 		SharedLSADatabase.add(_myLsa);
 	}
 	
-	public void reloadPipe(World worldObj, int xCoord, int yCoord, int zCoord) {
+	/*public void reloadPipe(World worldObj, int xCoord, int yCoord, int zCoord) {
 		if (this._xCoord == xCoord && this._yCoord == yCoord && this._zCoord == zCoord && worldObj.getWorldInfo().getDimension() == this.worldObj.getWorldInfo().getDimension()) {
 			this.worldObj = worldObj;
 			recheckAdjacent();
 		}
-	}
+	}*/
 
 	@Override
 	@Deprecated
 	public CoreRoutedPipe getPipe(){
+		World worldObj = DimensionManager.getWorld(_dimension);
+		if(worldObj == null) {
+			worldObj = DimensionManager.getWorld(0);
+		}
 		TileEntity tile = worldObj.getBlockTileEntity(_xCoord, _yCoord, _zCoord);
 		
 		if (!(tile instanceof TileGenericPipe)) return null;
@@ -97,7 +102,6 @@ public class Router implements IRouter {
 		return (CoreRoutedPipe) pipe.pipe;
 	}
 
-		
 	private void ensureRouteTableIsUpToDate(){
 		if (_LSDVersion > _lastLSDVersion){
 			CreateRouteTable();
