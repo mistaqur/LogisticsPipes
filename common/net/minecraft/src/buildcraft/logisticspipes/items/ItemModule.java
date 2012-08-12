@@ -36,7 +36,7 @@ public class ItemModule extends ItemModuleProxy {
 	//Texture Map
 	public static final String textureMap =	"0000111111111111" +
 											"0000011111111111" +
-											"0000000011111111" +
+											"0000000001111111" +
 											"1110111011111111" +
 											"1110111011111111" +
 											"0111111111111111" +
@@ -154,7 +154,7 @@ public class ItemModule extends ItemModuleProxy {
 		registerModule(EXTRACTOR_MK3			, "Extractor MK3 module"		, ModuleExtractorMk3.class);
 		registerModule(ADVANCED_EXTRACTOR_MK3	, "Advanced Extractor MK3"		, ModuleAdvancedExtractorMK3.class);
 		registerModule(PROVIDER					, "Provider module"				, ModuleProvider.class);
-		registerModule(ELECTRICMANAGER        , "Electric Manager module"        , ModuleElectricManager.class, 34);
+		registerModule(ELECTRICMANAGER        , "Electric Manager module"        , ModuleElectricManager.class, 40);
 	}
 	
 	public void registerModule(int id, String name, Class<? extends ILogisticsModule> moduleClass) {

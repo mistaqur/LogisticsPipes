@@ -14,10 +14,12 @@ import net.minecraft.src.buildcraft.krapht.GuiHandler;
 import net.minecraft.src.buildcraft.krapht.gui.GuiProviderPipe;
 import net.minecraft.src.buildcraft.krapht.gui.GuiSupplierPipe;
 import net.minecraft.src.buildcraft.krapht.gui.orderer.GuiOrderer;
+import net.minecraft.src.buildcraft.krapht.gui.popup.GuiDiskPopup;
 import net.minecraft.src.buildcraft.krapht.logic.LogicCrafting;
 import net.minecraft.src.buildcraft.krapht.logic.LogicProvider;
 import net.minecraft.src.buildcraft.krapht.logic.LogicSatellite;
 import net.minecraft.src.buildcraft.krapht.logic.LogicSupplier;
+import net.minecraft.src.buildcraft.krapht.pipes.PipeItemsRequestLogisticsMk2;
 import net.minecraft.src.buildcraft.logisticspipes.ExtractionMode;
 import net.minecraft.src.buildcraft.logisticspipes.modules.GuiAdvancedExtractor;
 import net.minecraft.src.buildcraft.logisticspipes.modules.GuiExtractor;
@@ -108,16 +110,26 @@ public class PacketHandler implements IPacketHandler {
 					packetM.readData(data);
 					onAdvancedExtractorModuleIncludeRecive(packetM);
 					break;
-				case NetworkConstants.NON_CONTAINER_GUI:
-					final PacketPipeInteger packetN = new PacketPipeInteger();
-					packetN.readData(data);
-					handleNonContainerGui(packetN);
+				//case NetworkConstants.NON_CONTAINER_GUI:
+				//	final PacketPipeInteger packetN = new PacketPipeInteger();
+				//	packetN.readData(data);
+				//	handleNonContainerGui(packetN);
+				//	break;
+				case NetworkConstants.DISK_CONTENT:
+					final PacketItem packetO = new PacketItem();
+					packetO.readData(data);
+					handleRequestMK2DiskItem(packetO);
 					break;
+
 				case NetworkConstants.PIPE_UPDATE:
 					final PacketPipeUpdate packetO = new PacketPipeUpdate();
 					packetO.readData(data);
 					handlePacketPipeUpdate(packetO);
 					
+				case NetworkConstants.DISK_MACRO_REQUEST_RESPONSE:
+					final PacketItems packetP = new PacketItems();
+					packetP.readData(data);
+					handleMacroResponse(packetP);
 			}
 		} catch (final Exception ex) {
 			ex.printStackTrace();
@@ -277,10 +289,28 @@ public class PacketHandler implements IPacketHandler {
 		}
 	}
 
-	private void handleNonContainerGui(PacketPipeInteger packet) {
-		Object gui = new GuiHandler().getGuiElement(packet.integer, ModLoader.getMinecraftInstance().thePlayer, ModLoader.getMinecraftInstance().theWorld,packet.posX,packet.posY,packet.posZ);
-		if(gui instanceof GuiScreen) {
-			ModLoader.openGUI(ModLoader.getMinecraftInstance().thePlayer, (GuiScreen)gui);
+	//private void handleNonContainerGui(PacketPipeInteger packet) {
+	//	Object gui = new GuiHandler().getGuiElement(packet.integer, ModLoader.getMinecraftInstance().thePlayer, ModLoader.getMinecraftInstance().theWorld,packet.posX,packet.posY,packet.posZ);
+	//	if(gui instanceof GuiScreen) {
+	//		ModLoader.openGUI(ModLoader.getMinecraftInstance().thePlayer, (GuiScreen)gui);
+	//	}
+	//}
+
+	private void handleRequestMK2DiskItem(PacketItem packet) {
+		final TileGenericPipe tile = getPipe(ModLoader.getMinecraftInstance().theWorld, packet.posX, packet.posY, packet.posZ);
+		if(tile == null) {
+			return;
+		}
+		if(tile.pipe instanceof PipeItemsRequestLogisticsMk2) {
+			((PipeItemsRequestLogisticsMk2)tile.pipe).setDisk(packet.itemstack);
+		}
+	}
+	
+	private void handleMacroResponse(PacketItems packet) {
+		if (ModLoader.getMinecraftInstance().currentScreen instanceof GuiOrderer) {
+			if(((GuiOrderer) ModLoader.getMinecraftInstance().currentScreen).getSubGui() instanceof GuiDiskPopup) {
+				((GuiOrderer) ModLoader.getMinecraftInstance().currentScreen).handleRequestAnswer(packet.items, packet.error, ((GuiOrderer) ModLoader.getMinecraftInstance().currentScreen).getSubGui(),ModLoader.getMinecraftInstance().thePlayer);
+			}
 		}
 	}
 
