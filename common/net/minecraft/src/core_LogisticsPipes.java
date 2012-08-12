@@ -277,6 +277,8 @@ import net.minecraft.src.buildcraft.krapht.SimpleServiceLocator;
 import net.minecraft.src.buildcraft.krapht.TriggerSupplierFailed;
 import net.minecraft.src.buildcraft.krapht.forestry.ForestryProxy;
 import net.minecraft.src.buildcraft.krapht.forestry.IForestryProxy;
+import net.minecraft.src.buildcraft.krapht.ic2.ElectricItemProxy;
+import net.minecraft.src.buildcraft.krapht.ic2.IElectricItemProxy;
 import net.minecraft.src.buildcraft.krapht.logistics.LogisticsManagerV2;
 import net.minecraft.src.buildcraft.krapht.pipes.*;
 import net.minecraft.src.buildcraft.krapht.routing.RouterManager;
@@ -333,7 +335,7 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 	public static Trigger LogisticsFailedTrigger;
 	
 	public static Action LogisticsDisableAction;
-
+	
 	// Ids
 	public static int ItemDiskId									= 6870;
 	public static int ItemModuleId									= 6871;
@@ -445,7 +447,10 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 	public static final float LOGISTICS_DEFAULTROUTED_SPEED_MULTIPLIER = 10F;
 	
 	protected static Configuration configuration;
-	
+
+	//GuiOrderer Popup setting
+	public static boolean displayPopup = true;
+
 	//Blocks
 	Block logisticsBlock;
 	
@@ -518,6 +523,23 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 				@Override public boolean forestryEnabled() {return false;}
 			});
 		}
+
+		if(ModLoader.isModLoaded("mod_IC2")) {
+			SimpleServiceLocator.setElectricItemProxy(new ElectricItemProxy());
+		} else {
+			//DummyProxy
+			SimpleServiceLocator.setElectricItemProxy(new IElectricItemProxy() {
+				@Override public boolean isElectricItem(ItemStack stack) {return false;}
+				@Override public int getCharge(ItemStack stack) {return 0;}
+				@Override public int getMaxCharge(ItemStack stack) {return 0;}
+				@Override public boolean isDischarged(ItemStack stack, boolean partial) {return false;}
+				@Override public boolean isCharged(ItemStack stack, boolean partial) {return false;}
+				@Override public boolean isDischarged(ItemStack stack, boolean partial, Item electricItem) {return false;}
+				@Override public boolean isCharged(ItemStack stack, boolean partial, Item electricItem) {return false;}
+				@Override public void addCraftingRecipes() {}
+			});
+		}
+
 		try {
 			PipeItemTeleport = (Class<? extends Pipe>) Class.forName("buildcraft.additionalpipes.pipes.PipeItemTeleport");
 			//PipeItemTeleport = (Class<? extends Pipe>) Class.forName("net.minecraft.src.buildcraft.additionalpipes.pipes.PipeItemTeleport");
@@ -632,8 +654,11 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 
 		Property pageInvertWheelProperty = configuration.getOrCreateBooleanProperty("ordererPageInvertWheel", Configuration.CATEGORY_GENERAL, LOGISTICS_ORDERER_PAGE_INVERTWHEEL);
 		pageInvertWheelProperty.comment = "Inverts the the mouse wheel scrolling for remote order pages";
+		
+		Property pageDisplayPopupProperty = configuration.getOrCreateBooleanProperty("displayPopup", Configuration.CATEGORY_GENERAL, displayPopup);
+		pageDisplayPopupProperty.comment = "Set the default configuration for the popup of the Orderer Gui. Should it be used?";
 
-
+		
 		
 		Property logisticsBlockId = configuration.getOrCreateIntProperty("logisticsBlockId", Configuration.CATEGORY_BLOCK, LOGISTICS_BLOCK_ID);
 		logisticsBlockId.comment = "The ID of the LogisticsPipes Block (0 if you don't want any block)";
@@ -669,6 +694,8 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 		LOGISTICS_BLOCK_ID = Integer.parseInt(logisticsBlockId.value);
 		
 		LOGISTICSCRAFTINGSIGNCREATOR_ID		= Integer.parseInt(logisticCraftingSignCreatorIdProperty.value);
+		
+		displayPopup = Boolean.parseBoolean(pageDisplayPopupProperty.value);
 		
 		LogisticsNetworkMonitior = new LogisticsItem(LOGISTICSNETWORKMONITOR_ID);
 		LogisticsNetworkMonitior.setIconIndex(LOGISTICSNETWORKMONITOR_ICONINDEX);
@@ -907,6 +934,8 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 			craftingManager.addRecipe(new ItemStack(LogisticsCraftingSignCreator, 1), new Object[] {"G G", " S ", " D ", Character.valueOf('G'), BuildCraftCore.goldGearItem, Character.valueOf('S'), Item.sign, Character.valueOf('D'), BuildCraftCore.diamondGearItem});
 			craftingManager.addRecipe(new ItemStack(LogisticsCraftingSignCreator, 1), new Object[] {"G G", " S ", " D ", Character.valueOf('G'), new ItemStack(BuildCraftSilicon.redstoneChipset, 1, 2), Character.valueOf('S'), Item.sign, Character.valueOf('D'), new ItemStack(BuildCraftSilicon.redstoneChipset, 1, 3)});
 		}
+
+		SimpleServiceLocator.electricItemProxy.addCraftingRecipes();
 		
 		//Blocks
 		if(LOGISTICS_BLOCK_ID != 0) {
@@ -934,6 +963,6 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 	
 	@Override
 	public String getVersion(){
-		return "0.5.@(Build_Number)";
+		return "%VERSION%";
 	}
 }
