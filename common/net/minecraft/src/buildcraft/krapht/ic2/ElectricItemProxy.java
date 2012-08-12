@@ -7,8 +7,8 @@ import net.minecraft.src.krapht.ItemIdentifier;
 import net.minecraft.src.buildcraft.logisticspipes.items.ItemModule;
 import net.minecraft.src.core_LogisticsPipes;
 
-import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftSilicon;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 
 import net.minecraft.src.ic2.api.IElectricItem;
 import net.minecraft.src.ic2.api.Items;

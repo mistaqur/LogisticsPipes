@@ -7,7 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.buildcraft.api.APIProxy;
+import buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.krapht.gui.orderer.NormalMk2GuiOrderer;
 import net.minecraft.src.krapht.gui.BasicGuiHelper;
 import net.minecraft.src.krapht.gui.SmallGuiButton;
