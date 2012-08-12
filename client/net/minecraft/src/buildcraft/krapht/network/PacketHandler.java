@@ -116,9 +116,9 @@ public class PacketHandler implements IPacketHandler {
 				//	handleNonContainerGui(packetN);
 				//	break;
 				case NetworkConstants.DISK_CONTENT:
-					final PacketItem packetO = new PacketItem();
-					packetO.readData(data);
-					handleRequestMK2DiskItem(packetO);
+					final PacketItem packetQ = new PacketItem();
+					packetQ.readData(data);
+					handleRequestMK2DiskItem(packetQ);
 					break;
 
 				case NetworkConstants.PIPE_UPDATE:
