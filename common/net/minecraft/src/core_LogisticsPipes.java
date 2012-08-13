@@ -479,7 +479,7 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 	@Override
 	public void modsLoaded() {
 		super.modsLoaded();
-		if(ModLoader.isModLoaded("mod_Forestry") || true) { //TODO remove this debug
+		if(ModLoader.isModLoaded("mod_Forestry")) { //TODO remove this debug
 			SimpleServiceLocator.setForestryProxy(new ForestryProxy());
 		} else {
 			//DummyProxy
@@ -708,7 +708,7 @@ public abstract class core_LogisticsPipes extends NetworkMod {
 		LOGISTICSPIPE_PROVIDERMK2_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_PROVIDERMK2_TEXTURE_FILE);
 		LOGISTICSPIPE_REMOTE_ORDERER_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_REMOTE_ORDERER_TEXTURE_FILE);
 		LOGISTICSPIPE_APIARIST_ANALYSER_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_APIARIST_ANALYSER_TEXTURE_FILE);
-		LOGISTICSPIPE_APIARIST_SINK_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_APIARIST_SINK_TEXTURE_FILE);
+		//LOGISTICSPIPE_APIARIST_SINK_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_APIARIST_SINK_TEXTURE_FILE);
 		
 		LOGISTICSPIPE_CHASSI_ROUTED_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_CHASSI_ROUTED_TEXTURE_FILE);
 		LOGISTICSPIPE_CHASSI_NOTROUTED_TEXTURE = CoreProxy.addCustomTexture(LOGISTICSPIPE_CHASSI_NOTROUTED_TEXTURE_FILE);
