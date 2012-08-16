@@ -12,11 +12,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.src.krapht.ItemIdentifier;
+import net.minecraft.src.buildcraft.krapht.IRequestItems;
 
 public class LogisticsTransaction {
 
 	private LinkedList<LogisticsRequest> _requests = new LinkedList<LogisticsRequest>();
 	private LinkedList<CraftingTemplate> _craftingTemplates = new LinkedList<CraftingTemplate>();
+	private HashMap<LogisticsRequest,LogisticsRequest> _causedBy = new HashMap<LogisticsRequest,LogisticsRequest>();
+	
 
 	public LogisticsTransaction (LogisticsRequest originalRequest){
 		_requests.add(originalRequest);
@@ -88,6 +91,25 @@ public class LogisticsTransaction {
 			return;
 		}
 		_requests.add(newRequest);
+	}
+
+	public void addRequest(LogisticsRequest newRequest, LogisticsRequest causedBy) {
+		if (_requests.contains(newRequest)){
+			return;
+		}
+		_requests.add(newRequest);
+		_causedBy.put(newRequest, causedBy);
+	}
+
+	public boolean isCausedBy(LogisticsRequest request, IRequestItems dest)
+	{
+		LogisticsRequest current = request;
+		while (current != null) {
+			if (current.getDestination() == dest)
+				return true;
+			current = _causedBy.get(current);
+		}
+		return false;
 	}
 
 }

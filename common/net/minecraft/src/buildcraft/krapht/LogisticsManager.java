@@ -159,6 +159,8 @@ public class LogisticsManager implements ILogisticsManager {
 			}
 		}
 		boolean added = true;
+		LinkedList<ItemIdentifier> alreadyIgnored = new LinkedList<ItemIdentifier>();
+		
 		while(!transaction.isDeliverable() && added){
 			//Then check if we can do this without crafting any items.
 			
@@ -190,24 +192,26 @@ public class LogisticsManager implements ILogisticsManager {
 					
 					LinkedList<CraftingTemplate> possibleCrafts = transaction.getCrafts(remaining.getItem());
 					if (possibleCrafts.isEmpty()) continue;
-					outer:
-					while(!remaining.isReady()){	
+
+					boolean crafted = true;
+					while(!remaining.isReady() && crafted){	
+						crafted = false;
 						for(CraftingTemplate template : possibleCrafts){
 							//Loop "safeguard"
 							ICraftItems crafter = template.getCrafter();
-							ItemIdentifier ResultItem = template.getResultStack().getItem();
-							HashMap<ItemIdentifier, Integer> totalPromised = transaction.getTotalPromised(crafter);
-							if (totalPromised.containsKey(ResultItem)){
-								int promisedCount = totalPromised.get(ResultItem);
-								if (promisedCount > 800){ //TODO Make Settings File for this
-									if(player != null)
-										MessageManager.overflow(player, ResultItem);
-									break outer;
+							if (transaction.isCausedBy(remaining, crafter)) {
+								ItemIdentifier resultItem = template.getResultStack().getItem();
+								if(player != null && !alreadyIgnored.contains(resultItem)) {
+									MessageManager.craftingLoop(player, resultItem);
+									alreadyIgnored.add(resultItem);
 								}
+								continue;
 							}
+
 							remaining.addPromise(template.generatePromise());
+							crafted = true;
 							for(LogisticsRequest newRequest : template.generateRequests()){
-								transaction.addRequest(newRequest);
+								transaction.addRequest(newRequest, remaining);
 								added = true;
 							}
 						}

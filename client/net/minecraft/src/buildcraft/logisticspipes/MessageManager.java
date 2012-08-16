@@ -10,5 +10,9 @@ public class MessageManager {
 	public static void overflow(EntityPlayer player, ItemIdentifier item) {
 		player.addChatMessage("Logistics: Possible crafting loop while trying to craft " + item.getFriendlyName() + " !! ABORTING !!");
 	}
+
+	public static void craftingLoop(EntityPlayer player, ItemIdentifier item) {
+		player.addChatMessage("Logistics: Possible crafting loop while trying to craft " + item.getFriendlyName() + " !! Skipped !!");
+	}
 	
 }
